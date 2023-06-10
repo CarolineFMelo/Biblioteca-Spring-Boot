@@ -12,17 +12,23 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.biblioteca.models.Livro;
 import com.example.demo.biblioteca.repositories.LivroRepository;
+import com.example.demo.biblioteca.repositories.UsuarioRepository;
 
 @RestController
-@RequestMapping("/api")
-public class LivroController {
-    
-    @Autowired
-    private LivroRepository repository;
+@RequestMapping("/api/livro/")
+public class LivroController extends BaseController<Livro, LivroRepository>{
 
-    @GetMapping("poo/livro/{codigo}")
-    public ResponseEntity<Livro> getLivroPorId(@PathVariable long codigo) {
-        Optional<Livro> optLivro = repository.findById(codigo);
+    @Override
+    protected void atualizarPropriedades(Livro dbEntidade, Livro novaEntidade) {
+        dbEntidade.setAnoPublicacao(novaEntidade.getAnoPublicacao());
+        dbEntidade.setAutor(novaEntidade.getAutor());
+        dbEntidade.setDisponivel(novaEntidade.getDisponivel());
+        dbEntidade.setTitulo(novaEntidade.getTitulo());
+    }
+
+    @GetMapping("{titulo}")
+    public ResponseEntity<Livro> getPorTitulo(@PathVariable String titulo) {
+        Optional<Livro> optLivro = getRepository().findByTitulo(titulo);
 
         if(optLivro.isPresent()) {
             return new ResponseEntity<Livro>(optLivro.get(), HttpStatus.OK);
@@ -30,5 +36,4 @@ public class LivroController {
 
         return new ResponseEntity<Livro>(HttpStatus.NO_CONTENT);
     }
-
 }

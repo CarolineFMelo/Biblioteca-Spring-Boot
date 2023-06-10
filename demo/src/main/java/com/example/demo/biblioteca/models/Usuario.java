@@ -1,11 +1,12 @@
 package com.example.demo.biblioteca.models;
 
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class Usuario {
@@ -20,13 +21,11 @@ public class Usuario {
 
     private String email;
 
-    @ManyToOne()
-    @JoinColumn(name = "fk_emprestimo")
-    private Emprestimo emprestimo;
+    @OneToMany(mappedBy = "usuario")    
+    private List<Emprestimo> emprestimos;
 
-    @ManyToOne()
-    @JoinColumn(name = "fk_reserva")
-    private Reserva reserva;
+    @OneToMany(mappedBy = "usuario")    
+    private List<Reserva> reservas;
 
     public long getId() {
         return id;

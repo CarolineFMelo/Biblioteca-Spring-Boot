@@ -24,7 +24,8 @@ public class Emprestimo {
     @JoinColumn(name = "livro_id")
     private Livro livro;
 
-    @OneToMany(mappedBy = "emprestimo")
+    @ManyToOne()
+    @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 
     @Temporal(TemporalType.DATE)
@@ -50,13 +51,13 @@ public class Emprestimo {
         this.livro = livro;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
-    }
+    // public Usuario getUsuario() {
+    //     return usuario;
+    // }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
+    // public void setUsuario(Usuario usuario) {
+    //     this.usuario = usuario;
+    // }
 
     public Date getDataEmprestimo() {
         return dataEmprestimo;
