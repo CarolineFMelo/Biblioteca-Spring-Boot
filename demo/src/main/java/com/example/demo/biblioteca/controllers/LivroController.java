@@ -2,7 +2,6 @@ package com.example.demo.biblioteca.controllers;
 
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.biblioteca.models.Livro;
 import com.example.demo.biblioteca.repositories.LivroRepository;
-import com.example.demo.biblioteca.repositories.UsuarioRepository;
 
 @RestController
 @RequestMapping("/api/livro/")
@@ -26,7 +24,7 @@ public class LivroController extends BaseController<Livro, LivroRepository>{
         dbEntidade.setTitulo(novaEntidade.getTitulo());
     }
 
-    @GetMapping("{titulo}")
+    @GetMapping("titulo/{titulo}")
     public ResponseEntity<Livro> getPorTitulo(@PathVariable String titulo) {
         Optional<Livro> optLivro = getRepository().findByTitulo(titulo);
 

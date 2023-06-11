@@ -30,7 +30,7 @@ public abstract class BaseController<Entidade, Repositorio extends JpaRepository
         return new ResponseEntity<List<Entidade>>(repository.findAll(), HttpStatus.OK);
     }
 
-    @GetMapping("{codigo}")
+    @GetMapping("codigo/{codigo}")
     public ResponseEntity<Entidade> getPorId(@PathVariable long codigo) {
         Optional<Entidade> optLivro = repository.findById(codigo);
 
@@ -47,7 +47,7 @@ public abstract class BaseController<Entidade, Repositorio extends JpaRepository
         return new ResponseEntity<Entidade>(savedEntidade, HttpStatus.OK);
     }
 
-    @PutMapping("{codigo}")
+    @PutMapping("codigo/{codigo}")
     public ResponseEntity<Entidade> put(@PathVariable long codigo, @RequestBody Entidade entidade) {
         Optional<Entidade> optEntidade = repository.findById(codigo);
         if (optEntidade.isPresent()) {
