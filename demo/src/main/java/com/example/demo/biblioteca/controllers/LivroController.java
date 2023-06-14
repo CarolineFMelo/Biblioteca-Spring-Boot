@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,7 +15,7 @@ import com.example.demo.biblioteca.models.Livro;
 import com.example.demo.biblioteca.repositories.LivroRepository;
 
 @RestController
-@RequestMapping("/api/livro/")
+@RequestMapping("/poo/livro/")
 public class LivroController extends BaseController<Livro, LivroRepository>{
 
     @Override
@@ -24,7 +26,7 @@ public class LivroController extends BaseController<Livro, LivroRepository>{
         dbEntidade.setTitulo(novaEntidade.getTitulo());
     }
 
-    @GetMapping("titulo/{titulo}")
+    @GetMapping("{titulo}")
     public ResponseEntity<Livro> getPorTitulo(@PathVariable String titulo) {
         Optional<Livro> optLivro = getRepository().findByTitulo(titulo);
 
@@ -33,5 +35,11 @@ public class LivroController extends BaseController<Livro, LivroRepository>{
         }
 
         return new ResponseEntity<Livro>(HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping("{titulo}")
+    public ResponseEntity<Livro> putPorTitulo(@PathVariable String titulo, @RequestBody Livro livro){
+        Optional<Livro> dbLivro = getRepository().findByTitulo(titulo);
+        return putPorString(livro, dbLivro);
     }
 }

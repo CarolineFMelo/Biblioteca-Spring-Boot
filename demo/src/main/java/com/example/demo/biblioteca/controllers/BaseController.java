@@ -30,7 +30,7 @@ public abstract class BaseController<Entidade, Repositorio extends JpaRepository
         return new ResponseEntity<List<Entidade>>(repository.findAll(), HttpStatus.OK);
     }
 
-    @GetMapping("codigo/{codigo}")
+    @GetMapping("{codigo}")
     public ResponseEntity<Entidade> getPorId(@PathVariable long codigo) {
         Optional<Entidade> optLivro = repository.findById(codigo);
 
@@ -47,13 +47,24 @@ public abstract class BaseController<Entidade, Repositorio extends JpaRepository
         return new ResponseEntity<Entidade>(savedEntidade, HttpStatus.OK);
     }
 
-    @PutMapping("codigo/{codigo}")
+    @PutMapping("{codigo}")
     public ResponseEntity<Entidade> put(@PathVariable long codigo, @RequestBody Entidade entidade) {
         Optional<Entidade> optEntidade = repository.findById(codigo);
         if (optEntidade.isPresent()) {
             Entidade dbEntidade = optEntidade.get();
             //Atualizar os atributos
             atualizarPropriedades(dbEntidade, entidade);
+            return new ResponseEntity<Entidade>(repository.save(dbEntidade), HttpStatus.OK);
+        }
+        
+        return new ResponseEntity<Entidade>(HttpStatus.NO_CONTENT);
+    }
+
+    protected ResponseEntity<Entidade> putPorString(Entidade paraAtualizar, Optional<Entidade> optEntidade) {
+        if (optEntidade.isPresent()) {
+            Entidade dbEntidade = optEntidade.get();
+            //Atualizar os atributos
+            atualizarPropriedades(dbEntidade, paraAtualizar);
             return new ResponseEntity<Entidade>(repository.save(dbEntidade), HttpStatus.OK);
         }
         
