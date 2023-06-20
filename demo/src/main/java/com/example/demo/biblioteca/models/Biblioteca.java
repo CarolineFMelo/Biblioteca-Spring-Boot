@@ -2,6 +2,8 @@ package com.example.demo.biblioteca.models;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,12 +19,15 @@ public class Biblioteca {
 
     private String nome;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "biblioteca")
     private List<Livro> livros;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "biblioteca")
     private List<Reserva> reservas;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "biblioteca")
     private List<Emprestimo> emprestimos;
 

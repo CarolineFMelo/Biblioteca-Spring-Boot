@@ -1,5 +1,7 @@
 package com.example.demo.biblioteca.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,9 +25,10 @@ public class Livro {
 
     private int anoPublicacao;
 
-    private String disponivel;
+    private boolean disponivel;
 
     @ManyToOne()
+    @JsonBackReference
     @JoinColumn(name = "fk_biblioteca")
     private Biblioteca biblioteca;
 
@@ -67,11 +70,11 @@ public class Livro {
         this.anoPublicacao = anoPublicacao;
     }
 
-    public String getDisponivel() {
+    public boolean getDisponivel() {
         return disponivel;
     }
 
-    public void setDisponivel(String disponivel) {
+    public void setDisponivel(boolean disponivel) {
         this.disponivel = disponivel;
     }
 

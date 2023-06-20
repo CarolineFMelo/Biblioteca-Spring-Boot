@@ -2,13 +2,14 @@ package com.example.demo.biblioteca.models;
 
 import java.sql.Date;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -32,6 +33,7 @@ public class Emprestimo {
     private Date dataEmprestimo;
 
     @ManyToOne()
+    @JsonBackReference
     @JoinColumn(name = "fk_biblioteca")
     private Biblioteca biblioteca;
 
