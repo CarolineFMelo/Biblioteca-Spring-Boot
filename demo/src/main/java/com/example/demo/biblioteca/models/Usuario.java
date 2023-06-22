@@ -4,39 +4,24 @@ import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 
 @Entity
-public class Usuario {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+public class Usuario extends BaseEntidade {
 
     @Column(unique = true)
     private String ra;
 
     private String nome;
-    
+
     @Column(unique = true)
     private String email;
 
-    @OneToMany(mappedBy = "usuario")    
+    @OneToMany(mappedBy = "usuario")
     private List<Emprestimo> emprestimos;
 
-    @OneToMany(mappedBy = "usuario")    
+    @OneToMany(mappedBy = "usuario")
     private List<Reserva> reservas;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public String getRa() {
         return ra;
@@ -61,5 +46,5 @@ public class Usuario {
     public void setEmail(String email) {
         this.email = email;
     }
-    
+
 }
