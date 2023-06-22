@@ -101,7 +101,7 @@ public abstract class BaseController<Entidade extends BaseEntidade, Repositorio 
     public ResponseEntity<Entidade> deletePorID(@PathVariable long codigo) {
         try {
             repository.deleteById(codigo);
-            return new ResponseEntity<Entidade>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<Entidade>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<Entidade>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
