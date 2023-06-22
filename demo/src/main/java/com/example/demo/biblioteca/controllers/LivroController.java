@@ -1,7 +1,5 @@
 package com.example.demo.biblioteca.controllers;
 
-import java.util.Optional;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,7 +15,7 @@ import com.example.demo.biblioteca.repositories.LivroRepository;
 
 @RestController
 @RequestMapping("/poo/livro")
-public class LivroController extends BaseController<Livro, LivroRepository>{
+public class LivroController extends BaseController<Livro, LivroRepository> {
 
     @Override
     protected void atualizarPropriedades(Livro dbEntidade, Livro novaEntidade) {
@@ -27,31 +25,47 @@ public class LivroController extends BaseController<Livro, LivroRepository>{
         dbEntidade.setTitulo(novaEntidade.getTitulo());
     }
 
-    @Override
-    protected void deletePorString(String string) {
-        getRepository().deleteByTitulo(string);
-    }
+    // ======================================
+    // GET BY TITULO
+    // ======================================
 
     @GetMapping("/titulo/{titulo}")
     public ResponseEntity<Livro> getPorTitulo(@PathVariable String titulo) {
-        Optional<Livro> optLivro = getRepository().findByTitulo(titulo);
-
-        if(optLivro.isPresent()) {
-            return new ResponseEntity<Livro>(optLivro.get(), HttpStatus.OK);
+        try {
+            Livro optLivro = findByTitulo(titulo);
+            return new ResponseEntity<Livro>(optLivro, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<Livro>(HttpStatus.NO_CONTENT);
         }
 
-        return new ResponseEntity<Livro>(HttpStatus.NO_CONTENT);
     }
+
+    // ======================================
+    // PUT BY TITULO
+    // ======================================
 
     @PutMapping("/titulo/{titulo}")
-    public ResponseEntity<Livro> putPorTitulo(@PathVariable String titulo, @RequestBody Livro livro){
-        Optional<Livro> dbLivro = getRepository().findByTitulo(titulo);
-        return putPorString(livro, dbLivro);
+    public ResponseEntity<Livro> putPorTitulo(@PathVariable String titulo, @RequestBody Livro livro) {
+        try {
+            return putPorString(livro, findByTitulo(titulo));
+        } catch (Exception e) {
+            return new ResponseEntity<Livro>(HttpStatus.NOT_FOUND);
+        }
     }
 
+    // ======================================
+    // DELETE BY TITULO
+    // ======================================
+
     @DeleteMapping("/titulo/{titulo}")
-    public ResponseEntity<Livro> delteProTitulo(@PathVariable String titulo){
-        return deletarPorString(titulo);
+    public ResponseEntity<Livro> deletePorTitulo(@PathVariable String titulo) {
+        Livro livro = findByTitulo(titulo);
+        getRepository().delete(livro);
+        return new ResponseEntity<Livro>(HttpStatus.ACCEPTED);
+    }
+
+    private Livro findByTitulo(String titulo) {
+        return getRepository().findByTitulo(titulo).orElseThrow(() -> new RuntimeException("Book not found - "));
     }
 
 }
