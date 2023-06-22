@@ -15,6 +15,5 @@ public class EmprestimoController extends BaseController<Emprestimo, EmprestimoR
         dbEntidade.setLivro(novaEntidade.getLivro());
         dbEntidade.setUsuario(novaEntidade.getUsuario());
         dbEntidade.setDataEmprestimo(novaEntidade.getDataEmprestimo());
-        getRepository().refresh(dbEntidade);
     }
 }

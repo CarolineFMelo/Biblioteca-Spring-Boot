@@ -41,14 +41,13 @@ public abstract class BaseController<Entidade extends BaseEntidade, Repositorio 
     // GET BY ID
     // ======================================
 
-    @GetMapping("{codigo}")
-    public ResponseEntity<Entidade> getPorId(@PathVariable long codigo) {
-        Optional<Entidade> optLivro = repository.findById(codigo);
-
-        if (optLivro.isPresent()) {
-            return new ResponseEntity<Entidade>(optLivro.get(), HttpStatus.OK);
+    @GetMapping("{id}")
+    public ResponseEntity<Entidade> getPorId(@PathVariable long id) {
+        try {
+            return new ResponseEntity<Entidade>(findById(id), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<Entidade>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<Entidade>(HttpStatus.NO_CONTENT);
     }
 
     // ======================================
@@ -59,23 +58,24 @@ public abstract class BaseController<Entidade extends BaseEntidade, Repositorio 
     public ResponseEntity<Entidade> post(@RequestBody Entidade entidade) {
         Entidade savedEntidade = repository.save(entidade);
         repository.refresh(savedEntidade);
-        Optional<Entidade> dbEntidade = repository.findById(savedEntidade.getId());
-        return new ResponseEntity<Entidade>(dbEntidade.get(), HttpStatus.OK);
+        return new ResponseEntity<Entidade>(savedEntidade, HttpStatus.OK);
     }
 
     // ======================================
     // PUT BY ID
     // ======================================
 
-    @PutMapping("{codigo}")
-    public ResponseEntity<Entidade> put(@PathVariable long codigo, @RequestBody Entidade entidade) {
-        Optional<Entidade> optEntidade = repository.findById(codigo);
-        if (optEntidade.isPresent()) {
-            Entidade dbEntidade = optEntidade.get();
+    @PutMapping("{id}")
+    public ResponseEntity<Entidade> put(@PathVariable long id, @RequestBody Entidade entidade) {
+        try {
+            Entidade dbEntidade = findById(id);
             atualizarPropriedades(dbEntidade, entidade);
-            return new ResponseEntity<Entidade>(repository.save(dbEntidade), HttpStatus.OK);
+            repository.save(dbEntidade);
+            repository.refresh(dbEntidade);
+            return new ResponseEntity<Entidade>(dbEntidade, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<Entidade>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<Entidade>(HttpStatus.NO_CONTENT);
     }
 
     // ======================================
@@ -98,10 +98,10 @@ public abstract class BaseController<Entidade extends BaseEntidade, Repositorio 
     // DELETE BY ID
     // ======================================
 
-    @DeleteMapping("{codigo}")
-    public ResponseEntity<Entidade> deletePorID(@PathVariable long codigo) {
+    @DeleteMapping("{id}")
+    public ResponseEntity<Entidade> deletePorID(@PathVariable long id) {
         try {
-            repository.deleteById(codigo);
+            repository.deleteById(id);
             return new ResponseEntity<Entidade>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<Entidade>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -109,4 +109,8 @@ public abstract class BaseController<Entidade extends BaseEntidade, Repositorio 
     }
 
     protected abstract void atualizarPropriedades(Entidade dbEntidade, Entidade novaEntidade);
+
+    private Entidade findById(long id) {
+        return repository.findById(id).orElseThrow(() -> new RuntimeException("Book not found - "));
+    }
 }

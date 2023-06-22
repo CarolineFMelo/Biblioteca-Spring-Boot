@@ -15,6 +15,5 @@ public class ReservaController extends BaseController<Reserva, ReservaRepository
         dbEntidade.setDataReserva(novaEntidade.getDataReserva());
         dbEntidade.setLivro(novaEntidade.getLivro());
         dbEntidade.setDataReserva(novaEntidade.getDataReserva());
-        getRepository().refresh(dbEntidade);
     }
 }
