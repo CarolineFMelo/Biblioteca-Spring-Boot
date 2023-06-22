@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.http.HttpStatus; 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-public abstract class BaseController<Entidade, Repositorio extends JpaRepository<Entidade, Long>> {
+import com.example.demo.biblioteca.models.BaseEntidade;
+
+public abstract class BaseController<Entidade extends BaseEntidade, Repositorio extends JpaRepository<Entidade, Long>> {
     @Autowired
     private Repositorio repository;
 
@@ -46,7 +48,6 @@ public abstract class BaseController<Entidade, Repositorio extends JpaRepository
         if (optLivro.isPresent()) {
             return new ResponseEntity<Entidade>(optLivro.get(), HttpStatus.OK);
         }
-
         return new ResponseEntity<Entidade>(HttpStatus.NO_CONTENT);
     }
 
@@ -57,7 +58,8 @@ public abstract class BaseController<Entidade, Repositorio extends JpaRepository
     @PostMapping
     public ResponseEntity<Entidade> post(@RequestBody Entidade entidade) {
         Entidade savedEntidade = repository.save(entidade);
-        return new ResponseEntity<Entidade>(savedEntidade, HttpStatus.OK);
+        Optional<Entidade> dbEntidade = repository.findById(savedEntidade.getId());
+        return new ResponseEntity<Entidade>(dbEntidade.get(), HttpStatus.OK);
     }
 
     // ======================================
@@ -69,11 +71,9 @@ public abstract class BaseController<Entidade, Repositorio extends JpaRepository
         Optional<Entidade> optEntidade = repository.findById(codigo);
         if (optEntidade.isPresent()) {
             Entidade dbEntidade = optEntidade.get();
-            // Atualizar os atributos
             atualizarPropriedades(dbEntidade, entidade);
             return new ResponseEntity<Entidade>(repository.save(dbEntidade), HttpStatus.OK);
         }
-
         return new ResponseEntity<Entidade>(HttpStatus.NO_CONTENT);
     }
 
@@ -83,12 +83,14 @@ public abstract class BaseController<Entidade, Repositorio extends JpaRepository
 
     protected ResponseEntity<Entidade> putPorString(Entidade paraAtualizar, Optional<Entidade> optEntidade) {
         if (optEntidade.isPresent()) {
-            Entidade dbEntidade = optEntidade.get();
-            // Atualizar os atributos
-            atualizarPropriedades(dbEntidade, paraAtualizar);
-            return new ResponseEntity<Entidade>(repository.save(dbEntidade), HttpStatus.OK);
+            return putPorString(paraAtualizar, optEntidade.get());
         }
         return new ResponseEntity<Entidade>(HttpStatus.NO_CONTENT);
+    }
+
+    protected ResponseEntity<Entidade> putPorString(Entidade paraAtualizar, Entidade dbEntidade) {
+        atualizarPropriedades(dbEntidade, paraAtualizar);
+        return new ResponseEntity<Entidade>(repository.save(dbEntidade), HttpStatus.OK);
     }
 
     // ======================================
@@ -104,16 +106,6 @@ public abstract class BaseController<Entidade, Repositorio extends JpaRepository
             return new ResponseEntity<Entidade>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    protected ResponseEntity<Entidade> deletarPorString(String string) {
-        try {
-            deletePorString(string);
-            return new ResponseEntity<Entidade>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<Entidade>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
+    
     protected abstract void atualizarPropriedades(Entidade dbEntidade, Entidade novaEntidade);
-    protected abstract void deletePorString(String string);
 }
