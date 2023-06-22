@@ -5,9 +5,6 @@ import java.sql.Date;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
@@ -15,11 +12,7 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 
 @Entity
-public class Emprestimo {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+public class Emprestimo extends BaseEntidade{
 
     @OneToOne()
     @JoinColumn(name = "livro_id")
@@ -37,14 +30,6 @@ public class Emprestimo {
     @JoinColumn(name = "fk_biblioteca")
     private Biblioteca biblioteca;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public Livro getLivro() {
         return livro;
     }
@@ -53,13 +38,13 @@ public class Emprestimo {
         this.livro = livro;
     }
 
-    // public Usuario getUsuario() {
-    //     return usuario;
-    // }
+    public Usuario getUsuario() {
+        return usuario;
+    }
 
-    // public void setUsuario(Usuario usuario) {
-    //     this.usuario = usuario;
-    // }
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
 
     public Date getDataEmprestimo() {
         return dataEmprestimo;

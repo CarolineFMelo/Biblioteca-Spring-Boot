@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,8 +14,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.example.demo.biblioteca.models.BaseEntidade;
+import com.example.demo.biblioteca.repositories.BaseRepository;
 
-public abstract class BaseController<Entidade extends BaseEntidade, Repositorio extends JpaRepository<Entidade, Long>> {
+public abstract class BaseController<Entidade extends BaseEntidade, Repositorio extends BaseRepository<Entidade, Long>> {
     @Autowired
     private Repositorio repository;
 
@@ -58,6 +58,7 @@ public abstract class BaseController<Entidade extends BaseEntidade, Repositorio 
     @PostMapping
     public ResponseEntity<Entidade> post(@RequestBody Entidade entidade) {
         Entidade savedEntidade = repository.save(entidade);
+        repository.refresh(savedEntidade);
         Optional<Entidade> dbEntidade = repository.findById(savedEntidade.getId());
         return new ResponseEntity<Entidade>(dbEntidade.get(), HttpStatus.OK);
     }
@@ -106,6 +107,6 @@ public abstract class BaseController<Entidade extends BaseEntidade, Repositorio 
             return new ResponseEntity<Entidade>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     protected abstract void atualizarPropriedades(Entidade dbEntidade, Entidade novaEntidade);
 }
