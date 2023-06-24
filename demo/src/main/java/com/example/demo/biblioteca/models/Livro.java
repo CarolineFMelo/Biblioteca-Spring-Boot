@@ -2,6 +2,7 @@ package com.example.demo.biblioteca.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -25,10 +26,10 @@ public class Livro extends BaseEntidade {
     @JoinColumn(name = "fk_biblioteca")
     private Biblioteca biblioteca;
 
-    @OneToOne(mappedBy = "livro")
+    @OneToOne(mappedBy = "livro", cascade = CascadeType.ALL)
     private Emprestimo emprestimo;
 
-    @OneToOne(mappedBy = "livro")
+    @OneToOne(mappedBy = "livro", cascade = CascadeType.ALL)
     private Reserva reserva;
 
     public String getTitulo() {

@@ -38,13 +38,13 @@ public class Reserva extends BaseEntidade {
         this.livro = livro;
     }
 
-    // public Usuario getUsuario() {
-    // return usuario;
-    // }
+    public Usuario getUsuario() {
+    return usuario;
+    }
 
-    // public void setUsuario(Usuario usuario) {
-    // this.usuario = usuario;
-    // }
+    public void setUsuario(Usuario usuario) {
+    this.usuario = usuario;
+    }
 
     public Date getDataReserva() {
         return dataReserva;
