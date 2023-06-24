@@ -18,7 +18,7 @@ public class Usuario extends BaseEntidade {
     @Column(unique = true)
     private String email;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "usuario")
     private List<Emprestimo> emprestimos;
 
     @OneToMany(mappedBy = "usuario")

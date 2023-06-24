@@ -84,7 +84,7 @@ public class BibliotecaController extends BaseController<Biblioteca, BibliotecaR
     }
 
     @GetMapping("/reserva/porIdLivroIdUsuario/{idLivro}/{idUsuario}")
-    public ResponseEntity<Reserva> getPorIdLivroIdUsuario(@PathVariable Long idLivro, @PathVariable Long idUsuario) {
+    public ResponseEntity<Reserva> getReservaPorIdLivroIdUsuario(@PathVariable Long idLivro, @PathVariable Long idUsuario) {
         return reservaController.getPorIdLivroIdUsuario(idLivro, idUsuario);
     }
 
@@ -102,6 +102,11 @@ public class BibliotecaController extends BaseController<Biblioteca, BibliotecaR
     @DeleteMapping("/emprestimo/{id}")
     public ResponseEntity<Emprestimo> deleteEmprestimo(@PathVariable Long id) {
         return emprestimoController.deletePorID(id);
+    }
+
+    @GetMapping("/emprestimo/porIdLivroIdUsuario/{idLivro}/{idUsuario}")
+    public ResponseEntity<Emprestimo> getEmprestimoPorIdLivroIdUsuario(@PathVariable Long idLivro, @PathVariable Long idUsuario) {
+        return emprestimoController.getPorIdLivroIdUsuario(idLivro, idUsuario);
     }
 
 }

@@ -26,7 +26,7 @@ public class Livro extends BaseEntidade {
     @JoinColumn(name = "fk_biblioteca")
     private Biblioteca biblioteca;
 
-    @OneToOne(mappedBy = "livro", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "livro")
     private Emprestimo emprestimo;
 
     @OneToOne(mappedBy = "livro")
