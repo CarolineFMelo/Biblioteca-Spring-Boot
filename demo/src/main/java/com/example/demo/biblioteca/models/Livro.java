@@ -29,7 +29,7 @@ public class Livro extends BaseEntidade {
     @OneToOne(mappedBy = "livro", cascade = CascadeType.ALL)
     private Emprestimo emprestimo;
 
-    @OneToOne(mappedBy = "livro", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "livro")
     private Reserva reserva;
 
     public String getTitulo() {

@@ -21,7 +21,7 @@ public class Usuario extends BaseEntidade {
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     private List<Emprestimo> emprestimos;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "usuario")
     private List<Reserva> reservas;
 
     public String getRa() {
