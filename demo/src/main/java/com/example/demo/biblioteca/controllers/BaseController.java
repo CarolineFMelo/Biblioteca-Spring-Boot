@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,11 +15,23 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.example.demo.biblioteca.models.BaseEntidade;
+import com.example.demo.biblioteca.models.Emprestimo;
+import com.example.demo.biblioteca.models.Livro;
+import com.example.demo.biblioteca.models.Reserva;
 import com.example.demo.biblioteca.repositories.BaseRepository;
+import com.example.demo.biblioteca.repositories.EmprestimoRepository;
+import com.example.demo.biblioteca.repositories.LivroRepository;
+import com.example.demo.biblioteca.repositories.ReservaRepository;
 
 public abstract class BaseController<Entidade extends BaseEntidade, Repositorio extends BaseRepository<Entidade, Long>> {
     @Autowired
     private Repositorio repository;
+
+    @Autowired
+    private LivroRepository livroRepositorio;
+
+    @Autowired
+    private ReservaRepository reservaRepository;
 
     public Repositorio getRepository() {
         return repository;
@@ -34,7 +47,11 @@ public abstract class BaseController<Entidade extends BaseEntidade, Repositorio 
 
     @GetMapping
     public ResponseEntity<List<Entidade>> getAll() {
-        return new ResponseEntity<List<Entidade>>(repository.findAll(), HttpStatus.OK);
+        try {
+            return new ResponseEntity<List<Entidade>>(repository.findAll(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<List<Entidade>>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     // ======================================
@@ -56,9 +73,39 @@ public abstract class BaseController<Entidade extends BaseEntidade, Repositorio 
 
     @PostMapping
     public ResponseEntity<Entidade> post(@RequestBody Entidade entidade) {
-        Entidade savedEntidade = repository.save(entidade);
-        repository.refresh(savedEntidade);
-        return new ResponseEntity<Entidade>(savedEntidade, HttpStatus.OK);
+        try {
+            if (entidade instanceof Emprestimo) {
+                Emprestimo entEmprestimo = (Emprestimo) entidade;
+                Livro livro = entEmprestimo.getLivro();
+                Optional<Livro> optLivro = livroRepositorio.findById(livro.getId());
+                boolean disponivel = optLivro.get().getDisponivel();
+
+                if (!disponivel)
+                    return new ResponseEntity<Entidade>(HttpStatus.BAD_REQUEST);
+
+                Optional<Reserva> optReserva = reservaRepository.findByLivroAndUsuario(livro,
+                        entEmprestimo.getUsuario());
+                if (optReserva.isPresent()) {
+                    reservaRepository.deleteById(optReserva.get().getId());
+                }
+
+                optLivro.get().setDisponivel(false);
+                livroRepositorio.save(optLivro.get());
+            } else if (entidade instanceof Reserva) {
+                Reserva entReserva = (Reserva) entidade;
+                Livro livro = entReserva.getLivro();
+                Optional<Livro> optLivro = livroRepositorio.findById(livro.getId());
+                boolean disponivel = optLivro.get().getDisponivel();
+                if (disponivel)
+                    return new ResponseEntity<Entidade>(HttpStatus.BAD_REQUEST);
+            }
+
+            Entidade savedEntidade = repository.save(entidade);
+            repository.refresh(savedEntidade);
+            return new ResponseEntity<Entidade>(savedEntidade, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<Entidade>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     // ======================================
@@ -101,10 +148,18 @@ public abstract class BaseController<Entidade extends BaseEntidade, Repositorio 
     @DeleteMapping("{id}")
     public ResponseEntity<Entidade> deletePorID(@PathVariable long id) {
         try {
+            Optional<Entidade> entidade = repository.findById(id);
+            if (entidade.get() instanceof Emprestimo) {
+                Emprestimo entEmprestimo = (Emprestimo) entidade.get();
+                Livro livro = entEmprestimo.getLivro();
+                Optional<Livro> optLivro = livroRepositorio.findById(livro.getId());
+                optLivro.get().setDisponivel(true);
+                livroRepositorio.save(optLivro.get());
+            }
             repository.deleteById(id);
-            return new ResponseEntity<Entidade>(HttpStatus.OK);
+            return new ResponseEntity<Entidade>(HttpStatus.ACCEPTED);
         } catch (Exception e) {
-            return new ResponseEntity<Entidade>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<Entidade>(HttpStatus.BAD_REQUEST);
         }
     }
 

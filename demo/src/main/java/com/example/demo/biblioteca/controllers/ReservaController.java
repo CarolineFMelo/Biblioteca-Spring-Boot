@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.HttpStatus;
@@ -38,6 +37,34 @@ public class ReservaController extends BaseController<Reserva, ReservaRepository
         try {
             Optional<Livro> optLivro = livroRepository.findById(idLivro);
             Optional<Usuario> optUsuario = usuarioRepository.findById(idUsuario);
+            if (!(optLivro.isPresent() && optUsuario.isPresent()))
+                return new ResponseEntity<Reserva>(HttpStatus.BAD_REQUEST);
+            Optional<Reserva> optReserva = getRepository().findByLivroAndUsuario(optLivro.get(), optUsuario.get());
+            return new ResponseEntity<Reserva>(optReserva.get(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<Reserva>(HttpStatus.NO_CONTENT);
+        }
+    }
+
+    public ResponseEntity<Reserva> getPorTituloLivroRaUsuario(String titulo, String raUsuario) {
+        try {
+            Optional<Livro> optLivro = livroRepository.findByTitulo(titulo);
+            Optional<Usuario> optUsuario = usuarioRepository.findByRa(raUsuario);
+            if (!(optLivro.isPresent() && optUsuario.isPresent()))
+                return new ResponseEntity<Reserva>(HttpStatus.BAD_REQUEST);
+            Optional<Reserva> optReserva = getRepository().findByLivroAndUsuario(optLivro.get(), optUsuario.get());
+            return new ResponseEntity<Reserva>(optReserva.get(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<Reserva>(HttpStatus.NO_CONTENT);
+        }
+    }
+
+    public ResponseEntity<Reserva> getPorTituloLivroEmailUsuario(String titulo, String email) {
+        try {
+            Optional<Livro> optLivro = livroRepository.findByTitulo(titulo);
+            Optional<Usuario> optUsuario = usuarioRepository.findByEmail(email);
+            if (!(optLivro.isPresent() && optUsuario.isPresent()))
+                return new ResponseEntity<Reserva>(HttpStatus.BAD_REQUEST);
             Optional<Reserva> optReserva = getRepository().findByLivroAndUsuario(optLivro.get(), optUsuario.get());
             return new ResponseEntity<Reserva>(optReserva.get(), HttpStatus.OK);
         } catch (Exception e) {

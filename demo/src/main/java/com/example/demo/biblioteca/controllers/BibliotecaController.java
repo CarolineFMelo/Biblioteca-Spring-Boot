@@ -12,15 +12,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.biblioteca.models.Biblioteca;
 import com.example.demo.biblioteca.models.Emprestimo;
 import com.example.demo.biblioteca.models.Livro;
 import com.example.demo.biblioteca.models.Reserva;
-import com.example.demo.biblioteca.repositories.*;
 
 @RestController
 @RequestMapping("/poo/biblioteca")
-public class BibliotecaController extends BaseController<Biblioteca, BibliotecaRepository> {
+public class BibliotecaController {
 
     @Autowired
     private EmprestimoController emprestimoController;
@@ -30,11 +28,6 @@ public class BibliotecaController extends BaseController<Biblioteca, BibliotecaR
 
     @Autowired
     private ReservaController reservaController;
-
-    @Override
-    protected void atualizarPropriedades(Biblioteca dbEntidade, Biblioteca novaEntidade) {
-        dbEntidade.setNome(novaEntidade.getNome());
-    }
 
     // Métodos para livros
     @GetMapping("/livro")
@@ -57,12 +50,12 @@ public class BibliotecaController extends BaseController<Biblioteca, BibliotecaR
         return livroController.post(livro);
     }
 
-    @DeleteMapping("/livro/{id}") 
+    @DeleteMapping("/livro/{id}")
     public ResponseEntity<Livro> deletePorIdLivro(@PathVariable Long id) {
         return livroController.deletePorID(id);
     }
 
-    @DeleteMapping("/livro/titulo/{titulo}") 
+    @DeleteMapping("/livro/titulo/{titulo}")
     public ResponseEntity<Livro> deletePorTituloLivro(@PathVariable String titulo) {
         return livroController.deletePorTitulo(titulo);
     }
@@ -84,8 +77,21 @@ public class BibliotecaController extends BaseController<Biblioteca, BibliotecaR
     }
 
     @GetMapping("/reserva/porIdLivroIdUsuario/{idLivro}/{idUsuario}")
-    public ResponseEntity<Reserva> getReservaPorIdLivroIdUsuario(@PathVariable Long idLivro, @PathVariable Long idUsuario) {
+    public ResponseEntity<Reserva> getReservaPorIdLivroIdUsuario(@PathVariable Long idLivro,
+            @PathVariable Long idUsuario) {
         return reservaController.getPorIdLivroIdUsuario(idLivro, idUsuario);
+    }
+
+    @GetMapping("/reserva/porNomeLivroRaUsuario/{titulo}/{raUsuario}")
+    public ResponseEntity<Reserva> getReservaPorNomeLivroRaUsuario(@PathVariable String titulo,
+            @PathVariable String raUsuario) {
+        return reservaController.getPorTituloLivroRaUsuario(titulo, raUsuario);
+    }
+
+    @GetMapping("/reserva/porNomeLivroEmailUsuario/{tituloLivro}/{emailUsuario}")
+    public ResponseEntity<Reserva> getReservaPorNomeLivroEmailUsuario(@PathVariable String tituloLivro,
+            @PathVariable String emailUsuario) {
+        return reservaController.getPorTituloLivroEmailUsuario(tituloLivro, emailUsuario);
     }
 
     // Métodos para Empréstimos
@@ -105,8 +111,21 @@ public class BibliotecaController extends BaseController<Biblioteca, BibliotecaR
     }
 
     @GetMapping("/emprestimo/porIdLivroIdUsuario/{idLivro}/{idUsuario}")
-    public ResponseEntity<Emprestimo> getEmprestimoPorIdLivroIdUsuario(@PathVariable Long idLivro, @PathVariable Long idUsuario) {
+    public ResponseEntity<Emprestimo> getEmprestimoPorIdLivroIdUsuario(@PathVariable Long idLivro,
+            @PathVariable Long idUsuario) {
         return emprestimoController.getPorIdLivroIdUsuario(idLivro, idUsuario);
+    }
+
+    @GetMapping("/emprestimo/porNomeLivroRAUsuario/{titulo}/{ra}")
+    public ResponseEntity<Emprestimo> getEmprestimoPorTituloLivroRaUsuario(@PathVariable String titulo,
+            @PathVariable String ra) {
+        return emprestimoController.getPorTituloLivroRaUsuario(titulo, ra);
+    }
+
+    @GetMapping("/emprestimo/porNomeLivroEmailUsuario/{titulo}/{email}")
+    public ResponseEntity<Emprestimo> getEmprestimoPorTituloLivroEmailUsuario(@PathVariable String titulo,
+            @PathVariable String email) {
+        return emprestimoController.getPorTituloLivroEmailUsuario(titulo, email);
     }
 
 }

@@ -49,7 +49,7 @@ public class LivroController extends BaseController<Livro, LivroRepository> {
         try {
             return putPorString(livro, findByTitulo(titulo));
         } catch (Exception e) {
-            return new ResponseEntity<Livro>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<Livro>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -59,9 +59,13 @@ public class LivroController extends BaseController<Livro, LivroRepository> {
 
     @DeleteMapping("/titulo/{titulo}")
     public ResponseEntity<Livro> deletePorTitulo(@PathVariable String titulo) {
-        Livro livro = findByTitulo(titulo);
-        getRepository().delete(livro);
-        return new ResponseEntity<Livro>(HttpStatus.ACCEPTED);
+        try {
+            Livro livro = findByTitulo(titulo);
+            getRepository().delete(livro);
+            return new ResponseEntity<Livro>(HttpStatus.ACCEPTED);
+        } catch (Exception e) {
+            return new ResponseEntity<Livro>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     private Livro findByTitulo(String titulo) {

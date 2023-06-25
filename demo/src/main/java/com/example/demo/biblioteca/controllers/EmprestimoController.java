@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.biblioteca.models.Emprestimo;
 import com.example.demo.biblioteca.models.Livro;
-import com.example.demo.biblioteca.models.Reserva;
 import com.example.demo.biblioteca.models.Usuario;
 import com.example.demo.biblioteca.repositories.EmprestimoRepository;
 import com.example.demo.biblioteca.repositories.LivroRepository;
@@ -20,7 +19,7 @@ import com.example.demo.biblioteca.repositories.UsuarioRepository;
 @RequestMapping("/poo/emprestimo")
 public class EmprestimoController extends BaseController<Emprestimo, EmprestimoRepository> {
 
-     @Autowired
+    @Autowired
     private LivroRepository livroRepository;
 
     @Autowired
@@ -37,10 +36,42 @@ public class EmprestimoController extends BaseController<Emprestimo, EmprestimoR
         try {
             Optional<Livro> optLivro = livroRepository.findById(idLivro);
             Optional<Usuario> optUsuario = usuarioRepository.findById(idUsuario);
-            Optional<Emprestimo> optEmprestimo = getRepository().findByLivroAndUsuario(optLivro.get(), optUsuario.get());
+            if (!(optLivro.isPresent() && optUsuario.isPresent()))
+                return new ResponseEntity<Emprestimo>(HttpStatus.BAD_REQUEST);
+            Optional<Emprestimo> optEmprestimo = getRepository().findByLivroAndUsuario(optLivro.get(),
+                    optUsuario.get());
             return new ResponseEntity<Emprestimo>(optEmprestimo.get(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<Emprestimo>(HttpStatus.NO_CONTENT);
         }
     }
+
+    public ResponseEntity<Emprestimo> getPorTituloLivroRaUsuario(String titulo, String ra) {
+        try {
+            Optional<Livro> optLivro = livroRepository.findByTitulo(titulo);
+            Optional<Usuario> optUsuario = usuarioRepository.findByRa(ra);
+            if (!(optLivro.isPresent() && optUsuario.isPresent()))
+                return new ResponseEntity<Emprestimo>(HttpStatus.BAD_REQUEST);
+            Optional<Emprestimo> optEmprestimo = getRepository().findByLivroAndUsuario(optLivro.get(),
+                    optUsuario.get());
+            return new ResponseEntity<Emprestimo>(optEmprestimo.get(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<Emprestimo>(HttpStatus.NO_CONTENT);
+        }
+    }
+
+    public ResponseEntity<Emprestimo> getPorTituloLivroEmailUsuario(String titulo, String email) {
+        try {
+            Optional<Livro> optLivro = livroRepository.findByTitulo(titulo);
+            Optional<Usuario> optUsuario = usuarioRepository.findByEmail(email);
+            if (!(optLivro.isPresent() && optUsuario.isPresent()))
+                return new ResponseEntity<Emprestimo>(HttpStatus.BAD_REQUEST);
+            Optional<Emprestimo> optEmprestimo = getRepository().findByLivroAndUsuario(optLivro.get(),
+                    optUsuario.get());
+            return new ResponseEntity<Emprestimo>(optEmprestimo.get(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<Emprestimo>(HttpStatus.NO_CONTENT);
+        }
+    }
+
 }

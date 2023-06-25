@@ -4,6 +4,7 @@ import java.sql.Date;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -12,9 +13,8 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 
 @Entity
-public class Emprestimo extends BaseEntidade{
-
-    @OneToOne()
+public class Emprestimo extends BaseEntidade {
+    @OneToOne
     @JoinColumn(name = "livro_id")
     private Livro livro;
 
@@ -25,7 +25,7 @@ public class Emprestimo extends BaseEntidade{
     @Temporal(TemporalType.DATE)
     private Date dataEmprestimo;
 
-    @ManyToOne()
+    @ManyToOne
     @JsonBackReference
     @JoinColumn(name = "fk_biblioteca")
     private Biblioteca biblioteca;
@@ -53,7 +53,4 @@ public class Emprestimo extends BaseEntidade{
     public void setDataEmprestimo(Date dataEmprestimo) {
         this.dataEmprestimo = dataEmprestimo;
     }
-
-    
-
 }

@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -18,7 +19,7 @@ public class Reserva extends BaseEntidade {
     @JoinColumn(name = "livro_id")
     private Livro livro;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 
@@ -39,11 +40,11 @@ public class Reserva extends BaseEntidade {
     }
 
     public Usuario getUsuario() {
-    return usuario;
+        return usuario;
     }
 
     public void setUsuario(Usuario usuario) {
-    this.usuario = usuario;
+        this.usuario = usuario;
     }
 
     public Date getDataReserva() {
